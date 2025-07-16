@@ -1,7 +1,5 @@
 import { useState } from "react";
-import axios from "axios";
-
-const apiBase = import.meta.env.VITE_API_BASE || "http://localhost:8080";
+import api from "../api/axios"; // ✅ custom Axios with Basic Auth
 
 export default function PaymentForm() {
   const [form, setForm] = useState({
@@ -9,6 +7,7 @@ export default function PaymentForm() {
     phone: "",
     amount: "",
   });
+
   const [message, setMessage] = useState<string | null>(null);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -17,16 +16,20 @@ export default function PaymentForm() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
     try {
-      const res = await axios.post(`${apiBase}/pay`, {
+      const res = await api.post("/pay", {
         name: form.name,
         phone: form.phone,
         amount: parseFloat(form.amount),
       });
 
       setMessage("✅ " + res.data.message);
+      setForm({ name: "", phone: "", amount: "" });
     } catch (err: any) {
-      setMessage("❌ Payment failed: " + err.message);
+      const errorMsg =
+        err?.response?.data?.error || err?.message || "Unexpected error";
+      setMessage("❌ Payment failed: " + errorMsg);
     }
   };
 
@@ -66,7 +69,16 @@ export default function PaymentForm() {
           Send Payment
         </button>
       </form>
-      {message && <p className="mt-4 text-sm text-center">{message}</p>}
+      {message && (
+        <p
+          className={`mt-4 text-sm text-center ${
+            message.startsWith("✅") ? "text-green-600" : "text-red-600"
+          }`}
+        >
+          {message}
+        </p>
+      )}
     </div>
   );
 }
+// This code defines a React functional component named `PaymentForm` that allows users to make payments.

@@ -10,7 +10,7 @@ export interface Transaction {
   status: string;
 }
 
-export const useTransactionStream = (useSocket: boolean = false) => {
+export const useTransactionStream = (useSocket: boolean = true) => {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
 
   useEffect(() => {
