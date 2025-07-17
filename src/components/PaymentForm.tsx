@@ -1,11 +1,12 @@
 import { useState } from "react";
-import api from "../api/axios"; // ✅ custom Axios with Basic Auth
+import api from "../api/axios"; // ✅ your custom Axios instance
 
 export default function PaymentForm() {
   const [form, setForm] = useState({
     name: "",
     phone: "",
     amount: "",
+    billNumber: "",
   });
 
   const [message, setMessage] = useState<string | null>(null);
@@ -22,10 +23,11 @@ export default function PaymentForm() {
         name: form.name,
         phone: form.phone,
         amount: parseFloat(form.amount),
+        billNumber: form.billNumber,
       });
 
       setMessage("✅ " + res.data.message);
-      setForm({ name: "", phone: "", amount: "" });
+      setForm({ name: "", phone: "", amount: "", billNumber: "" });
     } catch (err: any) {
       const errorMsg =
         err?.response?.data?.error || err?.message || "Unexpected error";
@@ -62,6 +64,14 @@ export default function PaymentForm() {
           type="number"
           className="w-full p-2 border rounded"
         />
+        <input
+          name="billNumber"
+          value={form.billNumber}
+          onChange={handleChange}
+          placeholder="Bill Number (e.g. 12345678)"
+          required
+          className="w-full p-2 border rounded"
+        />
         <button
           type="submit"
           className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700"
@@ -81,4 +91,3 @@ export default function PaymentForm() {
     </div>
   );
 }
-// This code defines a React functional component named `PaymentForm` that allows users to make payments.
