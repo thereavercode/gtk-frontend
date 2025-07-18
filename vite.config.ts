@@ -1,8 +1,9 @@
+// vite.config.ts
 import { defineConfig } from "vite";
-import type { Plugin } from "vite"; // 👈 FIXED
+import type { Plugin } from "vite";
 import react from "@vitejs/plugin-react";
 import history from "connect-history-api-fallback";
-import type { NextHandleFunction } from "connect"; // 👈 for typing middleware
+import type { NextHandleFunction } from "connect"; // for typing middleware
 
 // Custom Vite plugin to add SPA fallback
 const spaFallbackPlugin: Plugin = {
@@ -23,7 +24,7 @@ export default defineConfig({
     port: 5173,
   },
   build: {
-    outDir: "../gtk-server/dist",
+    outDir: "dist",
     emptyOutDir: true,
   },
 });
