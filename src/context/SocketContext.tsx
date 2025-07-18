@@ -1,8 +1,14 @@
+// src/context/SocketContext.tsx
 import { createContext } from "react";
-import { io } from "socket.io-client";
+import io from "socket.io-client";
 
-export const socket = io("http://localhost:8080"); // update as needed
+export const socket = io("https://gtk-server.onrender.com", {
+  transports: ["websocket"],
+  secure: true,
+  reconnection: true,
+});
 export const SocketContext = createContext(socket);
+
 export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
