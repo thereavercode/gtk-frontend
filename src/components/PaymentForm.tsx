@@ -19,11 +19,11 @@ export default function PaymentForm() {
     e.preventDefault();
 
     try {
-      const res = await api.post("/pay", {
-        name: form.name,
-        phone: form.phone,
-        amount: parseFloat(form.amount),
+      const res = await api.post("/payments", {
         billNumber: form.billNumber,
+        amountPaid: parseFloat(form.amount),
+        bankReference: "GTK" + Date.now(),
+        paidAt: new Date().toISOString(),
       });
 
       setMessage("✅ " + res.data.message);
@@ -38,23 +38,24 @@ export default function PaymentForm() {
   return (
     <div className="max-w-md mx-auto p-6 bg-white shadow-md mt-10 rounded-xl">
       <h2 className="text-2xl font-bold mb-4">Make a Payment</h2>
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <input
-          name="name"
-          value={form.name}
-          onChange={handleChange}
-          placeholder="Full Name"
-          required
-          className="w-full p-2 border rounded"
-        />
-        <input
-          name="phone"
-          value={form.phone}
-          onChange={handleChange}
-          placeholder="Phone (e.g. 0712345678)"
-          required
-          className="w-full p-2 border rounded"
-        />
+      <form
+        onSubmit={async (e) => {
+          e.preventDefault();
+          try {
+            const res = await api.post("/payments", {
+              billNumber: form.billNumber,
+              amountPaid: parseFloat(form.amount),
+              bankReference: "GTK" + Date.now(),
+              paidAt: new Date().toISOString(),
+            });
+            setMessage("✅ Payment successful!");
+          } catch (err) {
+            console.error(err);
+            setMessage("❌ Payment failed. Please try again.");
+          }
+        }}
+        className="space-y-4"
+      >
         <input
           name="amount"
           value={form.amount}
