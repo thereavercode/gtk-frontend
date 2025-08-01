@@ -27,10 +27,15 @@ export default function PaymentForm() {
       });
       setMessage("✅ Payment successful!");
       setForm({ name: "", phone: "", amount: "", billNumber: "" });
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
-      setMessage("❌ Payment failed. Please try again.");
-    }
+      const errorMsg =
+        err?.response?.data?.error ||
+        err?.response?.data?.message ||
+        err.message ||
+        "Unexpected error";
+  setMessage("❌ Payment failed: " + errorMsg);
+}
   };
 
   return (
