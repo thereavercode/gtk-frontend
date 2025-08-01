@@ -19,7 +19,7 @@ export default function PaymentForm() {
     e.preventDefault();
 
     try {
-      api.post("/payments", {
+      await api.post("/payments", {
         billNumber: form.billNumber,
         amountPaid: parseFloat(form.amount),
         bankReference: "GTK" + Date.now(),
