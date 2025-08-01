@@ -1,5 +1,5 @@
 import { useState } from "react";
-import api from "../api/axios"; // ✅ your custom Axios instance
+import api from "../api/axios";
 
 export default function PaymentForm() {
   const [form, setForm] = useState({
@@ -8,54 +8,35 @@ export default function PaymentForm() {
     amount: "",
     billNumber: "",
   });
-
   const [message, setMessage] = useState<string | null>(null);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
+  // Properly define handleSubmit outside JSX
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     try {
-      const res = await api.post("/payments", {
+      const _res = await api.post("/payments", {
         billNumber: form.billNumber,
         amountPaid: parseFloat(form.amount),
         bankReference: "GTK" + Date.now(),
         paidAt: new Date().toISOString(),
       });
-
-      setMessage("✅ " + res.data.message);
+      setMessage("✅ Payment successful!");
       setForm({ name: "", phone: "", amount: "", billNumber: "" });
-    } catch (err: any) {
-      const errorMsg =
-        err?.response?.data?.error || err?.message || "Unexpected error";
-      setMessage("❌ Payment failed: " + errorMsg);
+    } catch (err) {
+      console.error(err);
+      setMessage("❌ Payment failed. Please try again.");
     }
   };
 
   return (
     <div className="max-w-md mx-auto p-6 bg-white shadow-md mt-10 rounded-xl">
       <h2 className="text-2xl font-bold mb-4">Make a Payment</h2>
-      <form
-        onSubmit={async (e) => {
-          e.preventDefault();
-          try {
-            const res = await api.post("/payments", {
-              billNumber: form.billNumber,
-              amountPaid: parseFloat(form.amount),
-              bankReference: "GTK" + Date.now(),
-              paidAt: new Date().toISOString(),
-            });
-            setMessage("✅ Payment successful!");
-          } catch (err) {
-            console.error(err);
-            setMessage("❌ Payment failed. Please try again.");
-          }
-        }}
-        className="space-y-4"
-      >
+      <form onSubmit={handleSubmit} className="space-y-4">
         <input
           name="amount"
           value={form.amount}
