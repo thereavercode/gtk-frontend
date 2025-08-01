@@ -1,4 +1,19 @@
-// src/api/axios.ts
+//src/api/axios.ts
+import axios from "axios";
+const username = import.meta.env.VITE_AUTH_USER || "cardinal";
+const password = import.meta.env.VITE_AUTH_PASS || "supersecret";
+
+const authHeader = `Basic ${btoa(`${username}:${password}`)}`;
+
+const api = axios.create({
+  baseURL: import.meta.env.VITE_API_BASE || "http://localhost:8080",
+  headers: {
+    Authorization: authHeader,
+  },
+});
+
+
+/* // src/api/axios.ts
 import axios from "axios";
 
 const username = import.meta.env.VITE_AUTH_USER || "cardinal";
@@ -12,6 +27,7 @@ const api = axios.create({
     )}`,
   },
 });
+*/
 
 export default api;
 // This code sets up an Axios instance with basic authentication and a base URL from environment variables.
