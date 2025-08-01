@@ -19,7 +19,7 @@ export default function PaymentForm() {
     e.preventDefault();
 
     try {
-      const _res = await api.post("/payments", {
+      api.post("/payments", {
         billNumber: form.billNumber,
         amountPaid: parseFloat(form.amount),
         bankReference: "GTK" + Date.now(),
@@ -31,8 +31,6 @@ export default function PaymentForm() {
       console.error(err);
       setMessage("❌ Payment failed. Please try again.");
     }
-      const _res = await api.post("/payments", { ... });
-      console.log(_res);
   };
 
   return (
