@@ -19,23 +19,25 @@ export default function PaymentForm() {
     e.preventDefault();
 
     try {
-      await api.post("/payments", {
+      const res = await api.post("/payments", { 
         billNumber: form.billNumber,
         amountPaid: parseFloat(form.amount),
         bankReference: "GTK" + Date.now(),
-        paidAt: new Date().toISOString(),
-      });
-      setMessage("✅ Payment successful!");
-      setForm({ name: "", phone: "", amount: "", billNumber: "" });
+        paidAt: new Date().toISOString(),});
+
+      if (res.data.success) {
+        setMessage(`✅ Payment successful! Bill: ${res.data.result.billNumber}`);
+        setForm({ name: "", phone: "", amount: "", billNumber: "" });
+      } else {
+        setMessage("❌ Payment failed: " + (res.data.message || "Unknown error"));
+      }
     } catch (err: any) {
-      console.error(err);
+      // Handle network or server errors here
       const errorMsg =
-        err?.response?.data?.error ||
-        err?.response?.data?.message ||
-        err.message ||
-        "Unexpected error";
-  setMessage("❌ Payment failed: " + errorMsg);
+        err?.response?.data?.error || err?.message || "Unexpected error";
+      setMessage("❌ Payment failed: " + errorMsg);
 }
+
   };
 
   return (
