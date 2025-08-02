@@ -1,91 +1,61 @@
-import React from "react";
-import {
-  useTransactionStream,
-  type Transaction,
-} from "../hooks/useTransactionStream";
-import * as XLSX from "xlsx";
-import { saveAs } from "file-saver";
+// src/components/Dashboard.tsx
+import React, { useEffect, useState } from "react";
+
+interface Metrics {
+  users: number;
+  transactions: number;
+  messages: number;
+}
 
 const Dashboard: React.FC = () => {
-  const transactions: Transaction[] = useTransactionStream(true);
+  const [metrics, setMetrics] = useState<Metrics>({
+    users: 128,
+    transactions: 376,
+    messages: 52,
+  });
 
-  const hasData = transactions.length > 0;
+  // Optional: simulate realtime updates
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setMetrics((prev) => ({
+        users: prev.users + Math.floor(Math.random() * 3),
+        transactions: prev.transactions + Math.floor(Math.random() * 8),
+        messages: prev.messages + Math.floor(Math.random() * 2),
+      }));
+    }, 5000);
 
-  const exportToExcel = () => {
-    const worksheet = XLSX.utils.json_to_sheet(transactions);
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Transactions");
-
-    const excelBuffer = XLSX.write(workbook, {
-      bookType: "xlsx",
-      type: "array",
-    });
-
-    const data = new Blob([excelBuffer], {
-      type: "application/octet-stream",
-    });
-
-    saveAs(data, `transactions_${new Date().toISOString()}.xlsx`);
-  };
+    return () => clearInterval(interval);
+  }, []);
 
   return (
-    <div className="max-w-4xl mx-auto p-6 mt-10 bg-white shadow rounded">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">💸 Real-Time Transactions</h1>
-        {hasData && (
-          <button
-            onClick={exportToExcel}
-            className="bg-green-600 text-white px-4 py-2 rounded-md shadow hover:bg-green-700 transition"
-          >
-            Export to Excel
-          </button>
-        )}
-      </div>
+    <div className="min-h-screen bg-gradient-to-br from-[#0f0c29] via-[#302b63] to-[#24243e] p-6 flex flex-col items-center text-white">
+      <h1 className="text-3xl md:text-4xl font-bold mb-10 tracking-wide">
+        🔮 Real-Time Dashboard
+      </h1>
 
-      {!hasData ? (
-        <p className="text-center text-gray-500">No transactions yet...</p>
-      ) : (
-        <ul className="space-y-3 max-h-[600px] overflow-y-auto">
-          {transactions.map(
-            ({
-              transactionId,
-              phone,
-              amount,
-              timestamp,
-              status,
-              billNumber,
-            }) => (
-              <li
-                key={transactionId}
-                className="flex justify-between items-center border p-3 rounded-md shadow-sm hover:bg-gray-50 transition"
-              >
-                <div>
-                  <p className="text-sm font-medium">{phone}</p>
-                  <p className="text-xs text-gray-400">
-                    Bill: {billNumber || "N/A"}
-                  </p>
-                  <p className="text-xs text-gray-500">
-                    {new Date(timestamp).toLocaleString()}
-                  </p>
-                </div>
-                <div className="text-right">
-                  <p className="text-green-600 font-semibold">KES {amount}</p>
-                  <p
-                    className={`text-xs flex items-center gap-1 ${
-                      status === "success" ? "text-green-500" : "text-red-500"
-                    }`}
-                  >
-                    <span className="w-2 h-2 rounded-full bg-current inline-block" />
-                    {status.toUpperCase()}
-                  </p>
-                </div>
-              </li>
-            )
-          )}
-        </ul>
-      )}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full max-w-5xl">
+        <Card title="Users" count={metrics.users} icon="👤" />
+        <Card title="Transactions" count={metrics.transactions} icon="💸" />
+        <Card title="Messages" count={metrics.messages} icon="✉️" />
+      </div>
     </div>
   );
 };
+
+interface CardProps {
+  title: string;
+  count: number;
+  icon: string;
+}
+
+const Card: React.FC<CardProps> = ({ title, count, icon }) => (
+  <div className="backdrop-blur-md bg-white/10 rounded-2xl border border-white/20 shadow-lg p-6 transition-all duration-300 hover:scale-105">
+    <div className="text-xl font-semibold mb-2 flex justify-between items-center">
+      <span>{title}</span>
+      <span className="text-2xl">{icon}</span>
+    </div>
+    <div className="text-4xl font-bold tracking-tight">{count}</div>
+  </div>
+);
 
 export default Dashboard;
