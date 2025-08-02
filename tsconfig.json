@@ -7,5 +7,9 @@
   "compilerOptions": {
     "types": ["vite/client"],
     "jsx": "react-jsx", // enables new JSX transform
+    "esModuleInterop": true,
+    "moduleResolution": "node",
+    "module": "ESNext",
+    "target": "ESNext"
   }
 }
