@@ -1,6 +1,6 @@
 //src/api/axios.ts
 import axios from "axios";
-const username = import.meta.env.VITE_AUTH_USER || "cardinal";
+const username = import.meta.env.VITE_AUTH_USER || "cardinal_user";
 const password = import.meta.env.VITE_AUTH_PASS || "supersecret";
 
 const authHeader = `Basic ${btoa(`${username}:${password}`)}`;
